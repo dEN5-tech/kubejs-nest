@@ -1,4 +1,4 @@
-# MinecraftTD - NestJS-Style KubeJS Framework
+#NestJS-Style KubeJS Framework
 
 A modern, modular architecture for KubeJS (Minecraft Forge/Fabric mod) inspired by NestJS.
 
@@ -156,3 +156,4 @@ finalCode = finalCode.replace(/(_loop\d*)\(\);/g,
 ## License
 
 MIT
+"# kubejs-nest" 
