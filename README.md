@@ -1,4 +1,4 @@
-##NestJS-Style KubeJS Framework
+NestJS-Style KubeJS Framework
 
 A modern, modular architecture for KubeJS (Minecraft Forge/Fabric mod) inspired by NestJS.
 
