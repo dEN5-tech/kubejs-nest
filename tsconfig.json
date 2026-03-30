@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ESNext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "Bundler",
+    "strict": false,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "allowJs": false,
+    "checkJs": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "rootDirs": [
+      "dist/probe/generated",
+      "dist/probe/user",
+      "dist/server_scripts",
+      "dist/startup_scripts",
+      "dist/client_scripts",
+      "src"
+    ],
+    "lib": ["ES2015", "DOM"],
+    "types": ["reflect-metadata"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "dist/probe/generated/**/*.d.ts"
+  ]
+}
