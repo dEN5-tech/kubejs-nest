@@ -1,10 +1,9 @@
 import { Module } from "./lib/decorators";
-import { InteractionModule } from "./modules/interaction/interaction.module";
-import { StorageService } from "./lib/storage.service";
+import { ClickerModule } from "./modules/clicker/clicker.module";
 
 @Module({
-  imports: [InteractionModule],
+  imports: [ClickerModule],
   controllers: [],
-  providers: [StorageService], // Global provider available to all modules
+  providers: [],
 })
 export class AppModule {}
