@@ -109,46 +109,48 @@ async function buildOnce() {
 
       // --- ULTIMATE RHINO SAFETY PATCHES (KubeJS) ---
 
-      // 1. SAFE PATCH FOR LOOPS (Fixes _i is not defined and _step is not defined)
-      // Replace function declaration to accept arguments
+      // 1. Улучшенный патч для объявления _loop (теперь принимает все переменные)
       finalCode = finalCode.replace(
         /var\s+(_loop\d*)\s*=\s*function\s+\1\s*\(\)\s*\{/g,
-        'var $1 = function $1(_step, _i, _i2, _i3, _i4) {'
+        'var $1 = function $1(_step, i, _i, _i2, _i3, _i4) {'
       );
       
-      // Replace function call, passing variables only if they exist
-      // This prevents ReferenceError
+      // 2. Улучшенный патч для вызова _loop (ловит и внутри if (...))
+      // Убрали точку с запятой, чтобы ловить внутри if (_loop()) continue;
       finalCode = finalCode.replace(
-        /(_loop\d*)\(\);/g,
-        '$1(typeof _step !== "undefined" ? _step : undefined, typeof _i !== "undefined" ? _i : undefined, typeof _i2 !== "undefined" ? _i2 : undefined, typeof _i3 !== "undefined" ? _i3 : undefined, typeof _i4 !== "undefined" ? _i4 : undefined);'
+        /(_loop\d*)\(\)/g,
+        '$1(typeof _step !== "undefined" ? _step : undefined, typeof i !== "undefined" ? i : undefined, typeof _i !== "undefined" ? _i : undefined, typeof _i2 !== "undefined" ? _i2 : undefined, typeof _i3 !== "undefined" ? _i3 : undefined, typeof _i4 !== "undefined" ? _i4 : undefined)'
       );
 
-      // 2. Fix tslib ("ar is not defined" error)
+      // 3. Фикс для "i is not defined" если Babel переименовал переменные в циклах
+      finalCode = finalCode.replace(
+        /events\.get\(i\)/g,
+        'events.get(typeof i !== "undefined" ? i : _i)'
+      );
+
+      // 4. Fix tslib ("ar is not defined" error)
       finalCode = finalCode.replace(
         /var\s+i\s*=\s*m\.call\(o\);\s*var\s+r;\s*var\s+ar\s*=\s*\[\];\s*var\s+e;/g, 
         'var i = m.call(o); var r; var e; var ar; ar = [];'
       );
 
-      // 2. Fix __spread2 function (tslib) - extract ar from for loop header
-      // ERROR: for (var ar = [], i = 0; ...) 
-      // PATCH: var ar = []; for (var i = 0; ...)
+      // 5. Fix __spread2 function (tslib) - extract ar from for loop header
       finalCode = finalCode.replace(
         /for\s*\(var\s+ar\s*=\s*\[\],\s*i\s*=\s*0;\s*i\s*<\s*arguments\.length;\s*i\+\+\)\s*ar\s*=\s*ar\.concat\(__read2\(arguments\[i\]\)\);/g,
         'var ar = []; for (var i = 0; i < arguments.length; i++) { ar = ar.concat(__read2(arguments[i])); }'
       );
 
-      // 3. Fix "_step is not defined" in property copy loops (esbuild)
-      // Pass _step into _loop function explicitly
+      // 6. Fix "_step is not defined" in property copy loops (esbuild)
       finalCode = finalCode.replace(
         /var\s+_loop\s*=\s*function\s+_loop\s*\(\)\s*\{\s*var\s+key\s*=\s*_step\.value;/g,
         'var _loop = function _loop(_step) { var key = _step.value;'
       );
       finalCode = finalCode.replace(/_loop\(\);/g, '_loop(_step);');
 
-      // 4. Catch safety
+      // 7. Catch safety
       finalCode = finalCode.replace(/catch\s*\(t\)\s*\{\s*\}/g, 'catch(e){}');
 
-      // 5. Global objects (for reflect-metadata and tsyringe)
+      // 8. Global objects (for reflect-metadata and tsyringe)
       finalCode = "var global = global || this; var globalThis = globalThis || this; var self = self || this;\n" + finalCode;
 
       fs.writeFileSync(outfile, finalCode)
