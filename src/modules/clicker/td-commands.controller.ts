@@ -1,5 +1,6 @@
 import { Controller, Command } from "../../lib/decorators";
 import { GameStats } from "./game-stats";
+import { UpgradeService } from "./upgrade.service";
 import { inject } from "tsyringe";
 
 /**
@@ -8,7 +9,8 @@ import { inject } from "tsyringe";
 @Controller()
 export class TDCommandsController {
   constructor(
-    @inject(GameStats) private stats: GameStats
+    @inject(GameStats) private stats: GameStats,
+    @inject(UpgradeService) private service: UpgradeService
   ) {}
 
   /**
@@ -72,6 +74,19 @@ export class TDCommandsController {
   addKill(ctx: any): number {
     this.stats.addKill(ctx.source.player);
     ctx.source.player.tell('+1 убийство добавлено!');
+    return 1;
+  }
+
+  /**
+   * Добавить золото (тест): /td_addgold
+   */
+  @Command('td_addgold')
+  addGold(ctx: any): number {
+    const player = ctx.source.player;
+    const uuid = player.uuid.toString();
+    const stats = this.service.getStats(uuid);
+    stats.clicks += 100;
+    (player as any).tell(`§aДобавлено 100 золота! Баланс: ${Math.floor(stats.clicks)}`);
     return 1;
   }
 }

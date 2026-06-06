@@ -1,4 +1,5 @@
 import { Controller, OnEvent, OnPacket, Tick } from "../../lib/decorators";
+import type { KjsEvent } from "../../lib/decorators";
 import { GameStats } from "./game-stats";
 import { inject } from "tsyringe";
 
@@ -28,10 +29,10 @@ export class TDLogicController {
    * Обработка смерти моба
    */
   @OnEvent(EntityEvents, 'death', 'minecraft:zombie')
-  onZombieDeath(event: any): void {
+  onZombieDeath(event: KjsEvent<typeof EntityEvents, 'death'>): void {
     if (event.source?.player) {
       this.stats.addKill(event.source.player);
-      event.source.player.tell("§6+1 🧟 убит! Всего: " + this.stats.totalKills);
+      (event.source.player as any).tell("§6+1 🧟 убит! Всего: " + this.stats.totalKills);
     }
   }
 
@@ -39,10 +40,10 @@ export class TDLogicController {
    * Обработка смерти скелета
    */
   @OnEvent(EntityEvents, 'death', 'minecraft:skeleton')
-  onSkeletonDeath(event: any): void {
+  onSkeletonDeath(event: KjsEvent<typeof EntityEvents, 'death'>): void {
     if (event.source?.player) {
       this.stats.addKill(event.source.player);
-      event.source.player.tell("§6+1 💀 убит! Всего: " + this.stats.totalKills);
+      (event.source.player as any).tell("§6+1 💀 убит! Всего: " + this.stats.totalKills);
     }
   }
 
@@ -50,10 +51,10 @@ export class TDLogicController {
    * Обработка смерти крипера
    */
   @OnEvent(EntityEvents, 'death', 'minecraft:creeper')
-  onCreeperDeath(event: any): void {
+  onCreeperDeath(event: KjsEvent<typeof EntityEvents, 'death'>): void {
     if (event.source?.player) {
       this.stats.addKill(event.source.player);
-      event.source.player.tell("§6+1 💚 убит! Всего: " + this.stats.totalKills);
+      (event.source.player as any).tell("§6+1 💚 убит! Всего: " + this.stats.totalKills);
     }
   }
 

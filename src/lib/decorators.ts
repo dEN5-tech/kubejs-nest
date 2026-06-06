@@ -48,7 +48,12 @@ export function Controller() {
 
 // ==================== EVENTS ====================
 
-export function OnEvent(host: any, methodName: string, extra?: any) {
+export type KjsEvent<H, K extends keyof H> = 
+  H[K] extends { (handler: (event: infer E) => void): any } ? E :
+  H[K] extends { (extra: any, handler: (event: infer E) => void): any } ? E :
+  any;
+
+export function OnEvent<H, K extends keyof H>(host: H, methodName: K, extra?: any) {
   return (target: any, propertyKey: string) => {
     const constructor = target.constructor;
     
@@ -193,7 +198,7 @@ export function Paint(elementId: string) {
  */
 export function BlockRegistry(id: string, tabId?: string) {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {
@@ -218,7 +223,7 @@ export function BlockRegistry(id: string, tabId?: string) {
  */
 export function ItemRegistry(id: string, tabId?: string) {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {
@@ -238,7 +243,7 @@ export function ItemRegistry(id: string, tabId?: string) {
 
 export function MobEffectRegistry(id: string) {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {
@@ -255,7 +260,7 @@ export function MobEffectRegistry(id: string) {
 
 export function EnchantmentRegistry(id: string) {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {
@@ -272,7 +277,7 @@ export function EnchantmentRegistry(id: string) {
 
 export function CreativeTab(id: string) {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {
@@ -289,7 +294,7 @@ export function CreativeTab(id: string) {
 
 export function EntityController(entityId: string) {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {
@@ -306,7 +311,7 @@ export function EntityController(entityId: string) {
 
 export function EntityRegistry(id: string, type: 'mob' | 'living' | 'base' = 'mob') {
   return (target: any) => {
-    const constructor = target.constructor;
+    const constructor = target;
 
     let classMeta = NATIVE_REGISTRY.get(constructor);
     if (!classMeta) {

@@ -31,8 +31,8 @@ export class StorageService {
     // Force convert Java object back to clean JS object via JSON
     // This removes weird "entries" and "0.0" from console
     try {
-      const jsonString = global.JSON.stringify(data);
-      return global.JSON.parse(jsonString);
+      const jsonString = JSON.stringify(data);
+      return JSON.parse(jsonString);
     } catch (e) {
       return {};
     }

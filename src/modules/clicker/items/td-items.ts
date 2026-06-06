@@ -49,3 +49,17 @@ export class SpeedPotionItem {
       .maxStackSize(16);
   }
 }
+
+/**
+ * Blaze Tower Item - спавнер огненной башни
+ */
+@ItemRegistry('kubejs:td_blaze_tower_item', 'kubejs:td_main_tab')
+export class BlazeTowerItem {
+  configure(builder: any): void {
+    builder
+      .texture('minecraft:item/blaze_rod')
+      .maxStackSize(16)
+      .glow(true)
+      .displayName('§6Огненная Башня (Строительство)');
+  }
+}

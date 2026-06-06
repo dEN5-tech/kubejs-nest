@@ -1,4 +1,5 @@
 import { Controller, OnEvent, Tick } from "../../lib/decorators";
+import type { KjsEvent } from "../../lib/decorators";
 import { UpgradeService } from "./upgrade.service";
 import { GameStats } from "./game-stats";
 import { inject } from "tsyringe";
@@ -12,7 +13,7 @@ export class ClickerController {
 
   // Barrel = click to earn
   @OnEvent(BlockEvents, 'rightClicked', 'minecraft:barrel')
-  handleFarm(event: any): void {
+  handleFarm(event: KjsEvent<typeof BlockEvents, 'rightClicked'>): void {
     const player = event.player;
     const uuid = player.uuid.toString();
     const stats = this.service.processClick(uuid);
@@ -23,7 +24,7 @@ export class ClickerController {
 
   // Grindstone = upgrade shop
   @OnEvent(BlockEvents, 'rightClicked', 'minecraft:grindstone')
-  handleUpgrade(event: any): void {
+  handleUpgrade(event: KjsEvent<typeof BlockEvents, 'rightClicked'>): void {
     const player = event.player;
     const uuid = player.uuid.toString();
     const result = this.service.upgrade(uuid);
@@ -58,5 +59,51 @@ export class ClickerController {
     
     event.player.tell("§aGame started! Wave: " + this.gameStats.currentWave);
     // Изменения уже в NBT - не нужен ручной save()!
+  }
+
+  // Right clicked generic block - build tower if holding blaze tower item
+  @OnEvent(BlockEvents, 'rightClicked')
+  handlePlacement(event: KjsEvent<typeof BlockEvents, 'rightClicked'>): void {
+    const player = event.player;
+    if (player.mainHandItem.id === 'kubejs:td_blaze_tower_item') {
+      const block = event.block;
+      // Spawn above the clicked block face
+      const x = block.x + 0.5;
+      const y = block.y + 1.0;
+      const z = block.z + 0.5;
+      
+      const uuid = player.uuid.toString();
+      const stats = this.service.getStats(uuid);
+      
+      const cost = 50;
+      if (stats.clicks >= cost) {
+        stats.clicks -= cost;
+        
+        const level = event.level;
+        const tower = level.spawnMob('minecraft_td:blaze_tower', { x, y, z });
+        if (tower) {
+          (tower as any).setNoGravity(true);
+          (tower as any).customName = "§6Огненная Башня";
+          
+          (level as any).playSound(
+            'minecraft:block.stone.place',
+            x, y, z,
+            1.0, 1.0
+          );
+          
+          if (!player.creativeMode) {
+            player.mainHandItem.shrink(1);
+          }
+          
+          (player as any).tell(`§aБашня построена! -${cost} золота. Остаток: ${Math.floor(stats.clicks)}`);
+        } else {
+          (player as any).tell("§cОшибка при создании башни!");
+        }
+      } else {
+        (player as any).tell(`§cНедостаточно золота! Нужно ${cost} золота.`);
+      }
+      
+      event.cancel();
+    }
   }
 }

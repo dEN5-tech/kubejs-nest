@@ -1,4 +1,5 @@
 import { Controller, OnEvent } from "../../lib/decorators";
+import type { KjsEvent } from "../../lib/decorators";
 import { InteractionService } from "./interaction.service";
 import { inject } from "tsyringe";
 
@@ -9,7 +10,7 @@ export class InteractionController {
   ) {}
 
   @OnEvent(BlockEvents, 'rightClicked', 'minecraft:barrel')
-  handleBarrel(event: any): void {
+  handleBarrel(event: KjsEvent<typeof BlockEvents, 'rightClicked'>): void {
     const count = this.service.increment(event.player.name.string);
     event.player.tell(`NestJS Style: Click #${count}`);
     
@@ -19,7 +20,7 @@ export class InteractionController {
   }
 
   @OnEvent(BlockEvents, 'rightClicked', 'minecraft:chest')
-  handleChest(event: any): void {
+  handleChest(event: KjsEvent<typeof BlockEvents, 'rightClicked'>): void {
     const count = this.service.increment(event.player.name.string);
     event.player.tell(`Chest click #${count}`);
     
