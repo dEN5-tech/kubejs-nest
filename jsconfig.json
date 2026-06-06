@@ -4,8 +4,8 @@
     "checkJs": true,
     "baseUrl": ".",
     "rootDirs": [
-      "dist/probe/generated",
-      "dist/probe/user",
+      "probe/generated",
+      "probe/user",
       "dist/server_scripts",
       "dist/startup_scripts",
       "dist/client_scripts",
@@ -16,6 +16,6 @@
     "dist/**/*.js",
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "dist/probe/generated/**/*.d.ts"
+    "probe/generated/**/*.d.ts"
   ]
 }
